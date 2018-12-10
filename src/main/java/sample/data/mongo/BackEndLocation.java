@@ -1,24 +1,25 @@
 package sample.data.mongo;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.Objects;
 
 @Data
-@Document(collection = "backend")
-public class BackEndInstance {
+public class BackEndLocation {
 
-    @Id
-    private String id;
-
-    @Indexed(unique = true)
     private String url;
 
-    public BackEndInstance url(String url) {
+    public BackEndLocation url (String url) {
         this.url = url;
+        return this;
+    }
+
+    @DBRef
+    private BackEndInstance backEndInstance;
+
+    public BackEndLocation backEndInstance(BackEndInstance backEndInstance) {
+        this.backEndInstance = backEndInstance;
         return this;
     }
 
@@ -41,10 +42,10 @@ public class BackEndInstance {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class BackEndInstances {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("        id=").append(id).append("\n");
-        sb.append("        url=").append(url).append("\n");
+        sb.append("class BackEndLocation {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n")
+        .append("        url=").append(url).append("\n")
+        .append("        backendInstance=").append(backEndInstance).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -59,5 +60,6 @@ public class BackEndInstance {
         }
         return o.toString().replace("\n", "\n    ");
     }
+
 
 }

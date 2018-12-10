@@ -18,10 +18,12 @@ package sample.data.mongo;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;
 
 @Data
+@Document(collection = "tenant")
 public class Customer {
 
 	@Id
@@ -36,16 +38,16 @@ public class Customer {
 	public Customer() {
 	}
 
-	public Customer(String firstName, String lastName) {
+	public Customer(String firstName, String lastName, BackEnds backEnds) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		backEnds = new BackEnds();
+		this.backEnds = backEnds;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Customer[id=%s, firstName='%s', lastName='%s']", this.id,
-				this.firstName, this.lastName);
+		return String.format("Customer[id=%s, firstName='%s', lastName='%s', backends='%s']", this.id,
+				this.firstName, this.lastName, this.backEnds);
 	}
 
 }

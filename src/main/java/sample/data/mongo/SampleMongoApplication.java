@@ -21,6 +21,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.UUID;
+
 @SpringBootApplication
 public class SampleMongoApplication implements CommandLineRunner {
 
@@ -37,13 +39,33 @@ public class SampleMongoApplication implements CommandLineRunner {
 		String endpoint = "http://www.exemple.com/endpoint";
 		String endpoint1 = endpoint + "1/";
 		String endpoint2 = endpoint + "2/";
+		String endpoint3 = endpoint + "3/";
 
-		this.beRepository.save(new BackEndInstance().url(endpoint1));
-		this.beRepository.save(new BackEndInstance().url(endpoint2));
+		BackEndInstance backEndInstance1 = new BackEndInstance().url(endpoint1);
+		BackEndInstance backEndInstance2 = new BackEndInstance().url(endpoint2);
+
+		backEndInstance1= this.beRepository.save(backEndInstance1);
+		backEndInstance2= this.beRepository.save(backEndInstance2);
+
+
+		BackEndLocation backEndLoc1 = new BackEndLocation();
+		backEndLoc1.backEndInstance(backEndInstance1);
+		BackEndLocation backEndLoc2 = new BackEndLocation();
+		backEndLoc2.backEndInstance(backEndInstance2);
+		BackEndLocation backEndLoc3 = new BackEndLocation();
+		backEndLoc3.setUrl(endpoint3);
+
+		BackEnds backEnds1 = new BackEnds();
+		backEnds1.put(UUID.randomUUID().toString(), backEndLoc1);
+		backEnds1.put(UUID.randomUUID().toString(), backEndLoc2);
+		backEnds1.put(UUID.randomUUID().toString(), backEndLoc3);
+
+		BackEnds backEnds2 = new BackEnds();
+		backEnds2.put(UUID.randomUUID().toString(), backEndLoc2);
 
 		// save a couple of customers
-		this.repository.save(new Customer("Alice", "Smith"));
-		this.repository.save(new Customer("Bob", "Smith"));
+		this.repository.save(new Customer("Alice", "Smith", backEnds1));
+		this.repository.save(new Customer("Bob", "Smith", backEnds2));
 
 		// fetch all customers
 		System.out.println("Customers found with findAll():");
@@ -63,6 +85,20 @@ public class SampleMongoApplication implements CommandLineRunner {
 		for (Customer customer : this.repository.findByLastName("Smith")) {
 			System.out.println(customer);
 		}
+
+		// fetch all backend instances
+		System.out.println("BackEndInstance found with findAll():");
+		System.out.println("-------------------------------");
+		for (BackEndInstance backEndInstance : this.beRepository.findAll()) {
+			System.out.println(backEndInstance);
+		}
+		System.out.println();
+
+		// fetch an individual backend instance
+		System.out.println("BackEndInstance found with findByUrl('"+ endpoint1 +"'):");
+		System.out.println("--------------------------------");
+		System.out.println(this.beRepository.findByUrl(endpoint1));
+
 	}
 
 	public static void main(String[] args) {
